@@ -1,5 +1,6 @@
 import pygame
 
+# Default Frame Setting
 pygame.init()
 
 screen_width = 480
@@ -10,6 +11,7 @@ pygame.display.set_caption("Z_Game")
 
 clock = pygame.time.Clock()
 
+# Game Custom Setting
 background = pygame.image.load("./background.png")
 character = pygame.image.load("./character.png")
 character_size = character.get_rect().size
@@ -30,9 +32,17 @@ enemy_height = enemy_size[1]
 enemy_x_pos = (screen_width / 2) - (enemy_width / 2)
 enemy_y_pos = (screen_height /2) - (enemy_height / 2)
 
+game_font = pygame.font.Font(None, 40)
+
+total_time = 10
+
+start_ticks = pygame.time.get_ticks()
+
 running = True
 while running:
     dt = clock.tick(60)
+
+    # Event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -54,6 +64,7 @@ while running:
                 to_y = 0
         print(event)
 
+    # Character Position, Crash
     character_x_pos += to_x * dt
     character_y_pos += to_y * dt
 
@@ -79,10 +90,21 @@ while running:
     elif character_y_pos > screen_height - character_height:
         character_y_pos = screen_height - character_height
 
+    # Display
     screen.blit(background, (0, 0))
     screen.blit(enemy, (enemy_x_pos, enemy_y_pos))
     screen.blit(character, (character_x_pos, character_y_pos))
+
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
+    timer = game_font.render(str(int(total_time - elapsed_time)), True, (255, 255, 255))
+    screen.blit(timer, (10, 10))
     pygame.display.update()
+
+    if total_time - elapsed_time <= 0:
+        print("Time Out!")
+        running = False
+
+pygame.time.delay(2000)
 
 pygame.display.quit()
 pygame.quit()
