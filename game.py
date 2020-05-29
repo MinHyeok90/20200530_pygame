@@ -23,6 +23,13 @@ to_y = 0
 
 character_speed = 1
 
+enemy = pygame.image.load("./enemy.png")
+enemy_size = enemy.get_rect().size
+enemy_width = enemy_size[0]
+enemy_height = enemy_size[1]
+enemy_x_pos = (screen_width / 2) - (enemy_width / 2)
+enemy_y_pos = (screen_height /2) - (enemy_height / 2)
+
 running = True
 while running:
     dt = clock.tick(60)
@@ -50,6 +57,18 @@ while running:
     character_x_pos += to_x * dt
     character_y_pos += to_y * dt
 
+    character_rect = character.get_rect()
+    character_rect.left = character_x_pos
+    character_rect.top = character_y_pos
+
+    enemy_rect = enemy.get_rect()
+    enemy_rect.left = enemy_x_pos
+    enemy_rect.top = enemy_y_pos
+
+    if character_rect.colliderect(enemy_rect):
+        print("CRASH!")
+        running = False
+
     if character_x_pos < 0:
         character_x_pos = 0
     elif character_x_pos > screen_width - character_width:
@@ -61,6 +80,7 @@ while running:
         character_y_pos = screen_height - character_height
 
     screen.blit(background, (0, 0))
+    screen.blit(enemy, (enemy_x_pos, enemy_y_pos))
     screen.blit(character, (character_x_pos, character_y_pos))
     pygame.display.update()
 
