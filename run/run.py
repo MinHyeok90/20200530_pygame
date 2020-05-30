@@ -49,7 +49,7 @@ enemy_y_pos = random.randint(0, screen_height - enemy_height - stage_height)
 
 # Env
 game_font = pygame.font.Font(None, 40)
-total_count = 0
+score = 0
 start_ticks = pygame.time.get_ticks()
 game_result = "GAME OVER"
 
@@ -94,9 +94,18 @@ while running:
         enemy_y_pos = random.randint(0, screen_height - enemy_height - stage_height)
 
     # Crash
-    # character_rect = character.get_rect()
-    # character_rect.left = character_x_pos
-    # character_rect.top = character_y_pos
+    character_rect = character.get_rect()
+    character_rect.left = character_x_pos
+    character_rect.top = character_y_pos
+
+    enemy_rect = enemy.get_rect()
+    enemy_rect.left = enemy_x_pos
+    enemy_rect.top = enemy_y_pos
+
+    if character_rect.colliderect(enemy_rect):
+        game_result = "GAME OVER!"
+        running = False
+
 
     # for ball_idx, ball_val in enumerate(balls):
     #     ball_pos_x = ball_val["pos_x"]
@@ -111,13 +120,16 @@ while running:
     #         game_result = "GAME OVER!"
     #         running = False
     #         break
-            
-        
+
     # Display
     screen.blit(background, (0, 0))
     screen.blit(stage, (stage_x_pos, stage_y_pos))
     screen.blit(enemy, (enemy_x_pos, enemy_y_pos))
     screen.blit(character, (character_x_pos, character_y_pos))
+
+    score += 1
+    score_text = game_font.render("Score: {}".format(score), True, (0, 0, 0))
+    screen.blit(score_text, (screen_width - 160, 20))
     pygame.display.update()
 
 msg = game_font.render(game_result, True, (255, 0, 0))
@@ -125,7 +137,7 @@ msg_rect = msg.get_rect(center=(int(screen_width / 2), int(screen_height / 2)))
 screen.blit(msg, msg_rect)
 pygame.display.update()
 
-# pygame.time.delay(2000)
+pygame.time.delay(2000)
 
 pygame.display.quit()
 pygame.quit()
