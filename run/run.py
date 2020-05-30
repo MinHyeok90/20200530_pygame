@@ -5,8 +5,8 @@ import os
 # Default Frame Setting
 pygame.init()
 
-screen_width = 800
-screen_height = 600
+screen_width = 640
+screen_height = 400
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.display.set_caption("Z_Game")
@@ -34,7 +34,9 @@ character_height = character_size[1]
 character_to_y = 0
 character_x_pos = 50
 character_y_pos = screen_height - character_height - stage_height
-character_speed = 1
+character_jump_power = -2
+
+gravity_speed = 0.3
 
 # Env
 game_font = pygame.font.Font(None, 40)
@@ -42,10 +44,11 @@ total_count = 0
 start_ticks = pygame.time.get_ticks()
 game_result = "GAME OVER"
 
+canSpace = True
 # Run
 running = True
 while running:
-    dt = clock.tick(60)
+    dt = clock.tick(30)
 
     # Event
     for event in pygame.event.get():
@@ -56,20 +59,21 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 game_result = "EXIT"
                 running = False
-            elif event.key == pygame.K_SPACE:
-                pass
+            elif event.key == pygame.K_SPACE and canSpace:
+                canSpace = False
+                character_to_y = character_jump_power
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE:
-                pass
-
+    
     # Position
     character_y_pos += character_to_y * dt
 
-    if character_x_pos < 0:
-        character_x_pos = 0
-    elif character_y_pos > screen_height - character_height - stage_height:
-        character_y_pos = screen_width - character_width - stage_height
+    if character_y_pos >= screen_height - character_height - stage_height:
+        character_y_pos = screen_height - character_height - stage_height
+        canSpace = True
+        character_to_y = 0
+    else:
+        character_to_y += gravity_speed
+
 
 
     # Crash
@@ -104,7 +108,7 @@ msg_rect = msg.get_rect(center=(int(screen_width / 2), int(screen_height / 2)))
 screen.blit(msg, msg_rect)
 pygame.display.update()
 
-pygame.time.delay(2000)
+# pygame.time.delay(2000)
 
 pygame.display.quit()
 pygame.quit()
