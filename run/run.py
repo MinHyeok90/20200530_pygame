@@ -5,8 +5,8 @@ import os
 # Default Frame Setting
 pygame.init()
 
-screen_width = 640
-screen_height = 400
+screen_width = 480
+screen_height = 320
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.display.set_caption("Z_Game")
@@ -34,9 +34,18 @@ character_height = character_size[1]
 character_to_y = 0
 character_x_pos = 50
 character_y_pos = screen_height - character_height - stage_height
-character_jump_power = -2
+character_jump_power = -1
 
-gravity_speed = 0.3
+gravity_speed = 0.05
+
+#block
+enemy = pygame.image.load(os.path.join(image_path, "enemy.png"))
+enemy_size = enemy.get_rect().size
+enemy_width = enemy_size[0]
+enemy_height = enemy_size[1]
+enemy_to_x = -10
+enemy_x_pos = screen_width
+enemy_y_pos = random.randint(0, screen_height - enemy_height - stage_height)
 
 # Env
 game_font = pygame.font.Font(None, 40)
@@ -45,10 +54,12 @@ start_ticks = pygame.time.get_ticks()
 game_result = "GAME OVER"
 
 canSpace = True
+
+
 # Run
 running = True
 while running:
-    dt = clock.tick(30)
+    dt = clock.tick(60)
 
     # Event
     for event in pygame.event.get():
@@ -65,6 +76,7 @@ while running:
 
     
     # Position
+    # character
     character_y_pos += character_to_y * dt
 
     if character_y_pos >= screen_height - character_height - stage_height:
@@ -74,7 +86,12 @@ while running:
     else:
         character_to_y += gravity_speed
 
+    # enemy
+    enemy_x_pos += enemy_to_x
 
+    if enemy_x_pos < -enemy_width:
+        enemy_x_pos = screen_width
+        enemy_y_pos = random.randint(0, screen_height - enemy_height - stage_height)
 
     # Crash
     # character_rect = character.get_rect()
@@ -98,8 +115,8 @@ while running:
         
     # Display
     screen.blit(background, (0, 0))
-
     screen.blit(stage, (stage_x_pos, stage_y_pos))
+    screen.blit(enemy, (enemy_x_pos, enemy_y_pos))
     screen.blit(character, (character_x_pos, character_y_pos))
     pygame.display.update()
 
